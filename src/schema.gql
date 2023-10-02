@@ -1,0 +1,428 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Rating {
+  rating_id: ID!
+  score: Float!
+  comment: String!
+  user: Profile!
+  salon: Salon!
+  created_at: DateTime!
+  updated_at: DateTime!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type Address {
+  address_id: Float!
+  city: String!
+  country: String!
+  street: String!
+  postal_code: Float!
+  exterior_number: Float!
+  interior_number: Float!
+  salon: Salon!
+  created_at: DateTime!
+  updated_at: DateTime!
+}
+
+type Employee {
+  employee_id: Float!
+  profile_picture: String!
+  employee_name: String!
+  cellphone: String!
+  email: String
+  commission: String!
+  paymentCycle: String!
+  payday: String!
+  role: Roles!
+  service: [Service!]!
+  salon: Salon!
+  appointments: [Appointment!]!
+  created_at: DateTime!
+  updated_at: DateTime!
+}
+
+type Roles {
+  role_id: Float!
+  role_name: String!
+  employee: Employee
+  salon: Salon!
+  created_at: DateTime!
+  updated_at: DateTime!
+}
+
+type Salon {
+  salon_id: ID!
+  salon_name: String!
+  email: String!
+  cellphone: String!
+  main_picture: String!
+  wallpaper: String!
+  image_gallery: [JSON!]
+  description: String!
+  schedule: [JSON!]!
+  size: Float!
+  address: Address
+  services: [Service!]
+  owner: Profile!
+  ratings: [Rating!]
+  customers: [Profile!]
+  appointments: [Appointment!]!
+  employee: [Employee!]!
+  roles: [Roles!]!
+  created_at: DateTime!
+  updated_at: DateTime!
+}
+
+"""
+The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSON
+
+type Service {
+  service_id: ID!
+  service_name: String!
+  category: String!
+  gender: String!
+  description: String!
+  price: Float!
+  cancellation: JSON!
+  timespan: JSON!
+  paid: Boolean
+  employee: Employee
+  salon: Salon!
+  appointments: [Appointment!]!
+  created_at: DateTime!
+  updated_at: DateTime!
+}
+
+type Appointment {
+  appointment_id: ID!
+  start: DateTime!
+  end: DateTime!
+  is_active: Boolean
+  status: String
+  subscriber: Profile!
+  services: [Service!]!
+  salon: Salon!
+  attended_by: [Employee!]!
+  created_at: DateTime!
+  updated_at: DateTime!
+}
+
+type Notification {
+  profile: [Profile!]!
+  created_at: DateTime!
+  updated_at: DateTime!
+}
+
+type Profile {
+  profile_id: String!
+  description: String
+  wallpaper: String
+  profile_picture: String
+  image_gallery: [String!]
+  user: User!
+  salons: [Salon!]!
+  rates: [Rating!]!
+  notifications: [Notification!]!
+  has_purchased_in: [Salon!]!
+  appointments: [Appointment!]!
+  created_at: DateTime!
+  updated_at: DateTime!
+}
+
+type User {
+  user_id: ID!
+  stripe_customer_id: String!
+  full_name: String!
+  email: String!
+  password: String!
+  cellphone: String!
+  birthday: DateTime
+  gender: String
+  type: String
+  is_verified: Boolean
+  profile: Profile!
+  created_at: DateTime!
+  updated_at: DateTime!
+}
+
+type LoginResponse {
+  access_token: String!
+  user: User
+}
+
+type Client {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+type Query {
+  users: [User!]!
+  user(user_id: String!): User
+  profiles: [Profile!]!
+  profile(profile_id: ID!): Profile!
+  stripePublishableKey: String!
+  salons: [Salon!]!
+  findSalonsBy(findByInput: FindByInput!): [Salon!]!
+  salon(salon_id: Int!): Salon!
+  addresses: [Address!]!
+  address(address_id: ID!): Address!
+  services: [Service!]!
+  service(service_id: ID!): Service!
+  appointments: [Appointment!]!
+  appointment(appointment_id: ID!): Appointment!
+  notifications: [Notification!]!
+  notification(notification_id: ID!): Notification!
+  ratings: [Rating!]!
+  rating(rating_id: Int!): Rating!
+  client(id: Int!): Client!
+  employees: [Employee!]!
+  employee(employee_id: Int!): Employee!
+  roles(role_id: Int!): Roles!
+}
+
+input FindByInput {
+  search_input: String
+}
+
+type Mutation {
+  createUser(createUserInput: CreateUserInput!): User!
+  updateUser(user_id: ID!, updateUserInput: UpdateUserInput!, updateProfileInput: UpdateProfileInput): User!
+  removeUser(user_id: ID!): User!
+  login(loginUserInput: LoginInput!): LoginResponse!
+  confirmEmail(confirmEmailInput: ConfirmEmailInput!): User!
+  createProfile(user_id: ID!, createProfileInput: CreateProfileInput!): Profile!
+  updateProfile(user_id: ID!, updateProfileInput: UpdateProfileInput!): Profile!
+  addToGallery(galleryInput: GalleryInput!): Profile!
+  removeProfile(user_id: ID!): Profile!
+  clientSecret(stripe_customer_id: String!, stripeChargeInput: StripeChargeInput!): String!
+  cancelStripeCharge(paymentIntentId: String!): JSON!
+  createSalon(user_id: ID!, createSalonInput: CreateSalonInput!, createAddressInput: CreateAddressInput = null): Salon!
+  updateSalon(salon_id: ID!, updateSalonInput: UpdateSalonInput!, updateAddressInput: UpdateAddressInput): Salon!
+  removeSalon(salon_id: ID!): Salon!
+  createAddress(salon_id: Float!, createAddressInput: CreateAddressInput!): Address!
+  updateAddress(address_id: ID!, updateAddressInput: UpdateAddressInput!): Address!
+  removeAddress(address_id: ID!): Address!
+  createService(salon_id: ID!, createServiceInput: CreateServiceInput!): Service!
+  updateService(service_id: ID!, updateServiceInput: UpdateServiceInput!): Service!
+  removeService(service_id: ID!): Service!
+  createAppointment(profile_id: String!, createAppointmentInput: CreateAppointmentInput!): Appointment!
+  findByDate(start_date: DateTime!, end_date: DateTime): [Appointment!]!
+  updateAppointment(appointment_id: ID!, updateAppointmentInput: UpdateAppointmentInput!): Appointment!
+  removeAppointment(appointment_id: ID!): Appointment!
+  createNotification(profile_id: ID!, createNotificationInput: CreateNotificationInput!): Notification!
+  updateNotification(notification_id: Float!, updateNotificationInput: UpdateNotificationInput!): Notification!
+  removeNotification(notification_id: ID!): Notification!
+  createRating(user_id: String!, salon_id: Float!, createRatingInput: CreateRatingInput!): Rating!
+  updateRating(rating_id: ID!, updateRatingInput: UpdateRatingInput!): Rating!
+  removeRating(rating_id: ID!): Rating!
+  createClient(createClientInput: CreateClientInput!): Client!
+  updateClient(updateClientInput: UpdateClientInput!): Client!
+  removeClient(id: Int!): Client!
+  createEmployee(salon_id: Float!, role_name: String!, createEmployeeInput: CreateEmployeeInput!): Employee!
+  updateEmployee(employee_id: ID!, updateEmployeeInput: UpdateEmployeeInput!): Employee!
+  removeEmployee(employee_id: ID!): Employee!
+  createRole(salon_id: Float!, createRoleInput: CreateRoleInput!): Roles!
+  updateRole(role_id: ID!, updateRoleInput: UpdateRoleInput!): Roles!
+  remove(role_id: ID!): Roles!
+}
+
+input CreateUserInput {
+  email: String!
+  password: String!
+  type: String! = "customer"
+  full_name: String!
+  cellphone: String!
+  birthday: DateTime
+  gender: String = "undetermined"
+}
+
+input UpdateUserInput {
+  email: String
+  password: String
+  type: String = "customer"
+  full_name: String
+  cellphone: String
+  birthday: DateTime
+  gender: String = "undetermined"
+}
+
+input UpdateProfileInput {
+  wallpaper: String
+  profile_picture: String
+  image_gallery: [String!]
+  description: String
+}
+
+input LoginInput {
+  email: String!
+  password: String!
+  remember_me: Boolean = false
+}
+
+input ConfirmEmailInput {
+  token: String!
+}
+
+input CreateProfileInput {
+  wallpaper: String
+  profile_picture: String
+  image_gallery: [String!]
+  description: String
+}
+
+input GalleryInput {
+  user_id: String!
+  images: [String!]!
+}
+
+input StripeChargeInput {
+  amount: Int!
+  paymentMethodTypes: [String!]!
+  currency: String!
+}
+
+input CreateSalonInput {
+  salon_name: String!
+  email: String!
+  cellphone: String!
+  main_picture: String
+  wallpaper: String
+  image_gallery: [JSON!]
+  description: String!
+  schedule: [JSON!]!
+  size: Float
+}
+
+input CreateAddressInput {
+  country: String
+  city: String!
+  street: String!
+  postal_code: Float!
+  exterior_number: Float!
+  interior_number: Float
+}
+
+input UpdateSalonInput {
+  salon_name: String
+  email: String
+  cellphone: String
+  main_picture: String
+  wallpaper: String
+  image_gallery: [JSON!]
+  description: String
+  schedule: [JSON!]
+  size: Float
+}
+
+input UpdateAddressInput {
+  country: String
+  city: String
+  street: String
+  postal_code: Float
+  exterior_number: Float
+  interior_number: Float
+}
+
+input CreateServiceInput {
+  service_name: String!
+  category: String!
+  gender: String!
+  description: String!
+  price: Float!
+  cancellation: JSON!
+  timespan: JSON!
+  employee_id: Float
+}
+
+input UpdateServiceInput {
+  service_name: String
+  category: String
+  gender: String
+  description: String
+  price: Float
+  cancellation: JSON
+  timespan: JSON
+  employee_id: Float
+}
+
+input CreateAppointmentInput {
+  start: DateTime!
+  end: DateTime!
+  services_ids: [String!]!
+  salon_id: Float!
+  employees_ids: [Float!]!
+}
+
+input UpdateAppointmentInput {
+  start: DateTime
+  end: DateTime
+  services_ids: [String!]
+  salon_id: Float
+  employees_ids: [Float!]
+  status: String
+}
+
+input CreateNotificationInput {
+  message: String!
+}
+
+input UpdateNotificationInput {
+  message: String
+}
+
+input CreateRatingInput {
+  score: Int!
+  comment: String!
+}
+
+input UpdateRatingInput {
+  score: Int
+  comment: String
+}
+
+input CreateClientInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input UpdateClientInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
+input CreateEmployeeInput {
+  profile_picture: String
+  employee_name: String!
+  cellphone: String!
+  email: String!
+  commission: String!
+  paymentCycle: String!
+  payday: String!
+}
+
+input UpdateEmployeeInput {
+  profile_picture: String
+  employee_name: String
+  cellphone: String
+  email: String
+  commission: String
+  paymentCycle: String
+  payday: String
+}
+
+input CreateRoleInput {
+  role_name: String!
+}
+
+input UpdateRoleInput {
+  role_name: String
+}
