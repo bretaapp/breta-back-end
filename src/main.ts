@@ -18,11 +18,7 @@ async function bootstrap() {
   SwaggerModule.setup('docs', app, document);
 
   app.useGlobalPipes(new ValidationPipe());
-  app.enableCors({
-    origin: '*',
-    allowedHeaders: '*',
-    credentials: true,
-  });
+  app.enableCors();
 
   app.use(
     helmet({
