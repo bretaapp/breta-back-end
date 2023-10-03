@@ -44,6 +44,10 @@ export class Address {
   @OneToOne(() => Salon, (salon) => salon.address)
   salon: Salon;
 
+  @Field()
+  @Column('boolean', { default: false })
+  is_auto_generated: boolean;
+
   @Field(() => GraphQLISODateTime)
   @CreateDateColumn({
     type: 'timestamptz',

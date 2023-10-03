@@ -42,6 +42,8 @@ export class SalonService {
     if (createAddressInput) {
       const newAddress = this.addressRepo.create(createAddressInput);
       newAddress.salon = newSalon;
+    } else {
+      this.addressRepo.create({ is_auto_generated: true });
     }
 
     return this.salonRepo.save(newSalon);
