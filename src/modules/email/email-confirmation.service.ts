@@ -55,4 +55,23 @@ export class EmailConfirmationService {
       throw new BadRequestException(['Bad confirmation token']);
     }
   }
+
+  public sendForgotPasswordLink(email: string) {
+    const payload: VerificationTokenPayload = { email };
+    const token = this.jwtService.sign(payload, {
+      secret: this.configService.get('JWT_VERIFICATION_TOKEN_SECRET'),
+      expiresIn: `${this.configService.get(
+        'JWT_VERIFICATION_TOKEN_EXPIRATION_TIME',
+      )}s`,
+    });
+
+    return this.mailerService.sendMail({
+      to: email,
+      subject: 'Confirmacion de correo electronico',
+      template: 'reset-password',
+      context: {
+        token: token,
+      },
+    });
+  }
 }

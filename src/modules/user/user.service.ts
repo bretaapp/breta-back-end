@@ -8,6 +8,7 @@ import { Profile } from '../profile/entities/profile.entity';
 
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
+import * as bcrypt from 'bcrypt';
 
 import { HashService } from 'src/services/hash.service';
 import { ProfileService } from '../profile/profile.service';
@@ -17,6 +18,8 @@ import { EmailConfirmationService } from '../email/email-confirmation.service';
 import { CreateUserInput } from './dto/create-user.input';
 import { UpdateUserInput } from './dto/update-user.input';
 import { ConfirmEmailInput } from '../email/dto/confirm-email.input';
+import { ForgotPasswordInput } from './dto/forgot-password.input';
+import { ForgotPasswordTokenInput } from './dto/forgot-password-token.input';
 
 import { UpdateProfileInput } from '../profile/dto/update-profile.input';
 
@@ -152,6 +155,52 @@ export class UserService {
       confirmationData.token,
     );
     return await this.confirmEmail(email);
+  }
+
+  async requestPasswordReset (forgotPassword: ForgotPasswordInput) {
+    const user = await this.findOneByEmail(forgotPassword.email);
+
+    if(!user) {
+      throw new Error('Ususario no encontrado');
+    }
+
+    const send = this.emailConfirmationService.sendForgotPasswordLink(forgotPassword.email);
+    return user 
+  }
+
+  async verifyToken(token: ForgotPasswordTokenInput) {
+    const email =  await this.emailConfirmationService.decodeConfirmationToken(
+      token.token
+    )
+
+    const user = await this.userRepo.findOne({
+      where: { email },
+    });
+
+    return user
+  }
+
+  async resetPass (email: string, changes: UpdateUserInput) {
+    const user = await this.userRepo.findOneBy({email});
+    if(!user) throw new NotFoundException(['No se encontro al usuario']);
+    const validatePass = await bcrypt.compare(changes.password, user.password);
+
+    if(!changes.password) {
+      throw new BadRequestException(['Rellena los campos porfavor']);
+    }
+
+    if(validatePass === true) {
+      throw new BadRequestException(['No puedes usar la misma contraseña']);
+    }
+
+    const saltRounds = 10;
+    const password = changes.password;
+    const hash = await bcrypt.hash(password, saltRounds);
+    changes.password = hash;
+
+    this.userRepo.merge(user, changes);
+
+    return this.userRepo.save(user);
   }
 
   async remove(user_id: string) {
