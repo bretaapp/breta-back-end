@@ -67,7 +67,7 @@ export class EmailConfirmationService {
 
     return this.mailerService.sendMail({
       to: email,
-      subject: 'Confirmacion de correo electronico',
+      subject: 'Recuperación de contraseña',
       template: 'reset-password',
       context: {
         token: token,

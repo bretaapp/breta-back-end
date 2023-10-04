@@ -13,6 +13,8 @@ import { CreateUserInput } from './dto/create-user.input';
 import { UpdateUserInput } from './dto/update-user.input';
 import { ConfirmEmailInput } from '../email/dto/confirm-email.input';
 import { UpdateProfileInput } from '../profile/dto/update-profile.input';
+import { ForgotPasswordInput } from './dto/forgot-password.input';
+import { ForgotPasswordTokenInput } from './dto/forgot-password-token.input';
 
 import { LoginResponse } from './dto/login-response';
 
@@ -68,5 +70,27 @@ export class UserResolver {
     @Args('confirmEmailInput') confirmEmailInput: ConfirmEmailInput,
   ) {
     return this.userService.confirm(confirmEmailInput);
+  }
+
+  @Mutation(() => User)
+  requestForgotPassword(
+    @Args('forgotPasswordInput') forgotPasswordInput: ForgotPasswordInput, 
+  ) {
+    return this.userService.requestPasswordReset(forgotPasswordInput);
+  }
+
+  @Mutation(() => User)
+  updatePassword(
+    @Args('email') email: string,
+    @Args('updateUserInput') updateUserInput: UpdateUserInput,
+  ) {
+    return this.userService.resetPass(email, updateUserInput);
+  }
+
+  @Mutation(() => User)
+  verifyToken(
+    @Args('forgotPasswordTokenInput') forgotPasswordTokenInput:ForgotPasswordTokenInput,
+  ) {
+    return this.userService.verifyToken(forgotPasswordTokenInput);
   }
 }
